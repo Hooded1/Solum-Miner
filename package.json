@@ -15,5 +15,12 @@
   "bugs": {
     "url": "https://github.com/Hooded1/Solum-Miner/issues"
   },
-  "homepage": "https://github.com/Hooded1/Solum-Miner#readme"
+  "homepage": "https://github.com/Hooded1/Solum-Miner#readme",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "fs": "0.0.1-security",
+    "path": "^0.12.7",
+    "uuidv4": "^2.0.0"
+  }
 }
