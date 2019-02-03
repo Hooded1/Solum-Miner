@@ -1,3 +1,3 @@
-##Solum-Miner
+## Solum Miner
 
 Mining Game
