@@ -1,0 +1,19 @@
+{
+  "name": "solum-miner",
+  "version": "1.0.0",
+  "description": "Solumn Miner Game",
+  "main": "game.js",
+  "scripts": {
+    "start": "node game.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hooded1/Solum-Miner.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Hooded1/Solum-Miner/issues"
+  },
+  "homepage": "https://github.com/Hooded1/Solum-Miner#readme"
+}
