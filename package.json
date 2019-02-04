@@ -2,9 +2,9 @@
   "name": "solum-miner",
   "version": "1.0.0",
   "description": "Solumn Miner Game",
-  "main": "game.js",
+  "main": "server.js",
   "scripts": {
-    "start": "node game.js"
+    "start": "node server.js"
   },
   "repository": {
     "type": "git",

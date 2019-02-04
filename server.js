@@ -18,7 +18,7 @@ var options = {
   }
 }
 
-app.use('/public', express.static('public', options));
+app.use('/game', express.static('game', options));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -29,7 +29,7 @@ var sys = {
 }
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname + '/public/index.html'));
+  res.sendFile(path.join(__dirname + '/game/index.html'));
 });
 
 app.listen(sys.port, () => {
