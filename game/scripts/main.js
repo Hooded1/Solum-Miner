@@ -26,28 +26,28 @@ window.setTimeout(() => {
 
 function preload ()
 {
-  this.load.image('bg', 'game/assets/map.png');
-  this.load.image('block', 'game/assets/RoverUp.png');
+  var hack = '?v=' + (new Date()).getTime();
 
-  this.load.image('rover', 'game/assets/rover_basic.png');
+  this.load.image('bg', 'game/assets/map.png' + hack);
+  this.load.image('block', 'game/assets/RoverUp.png' + hack);
+
+  this.load.image('rover', 'game/assets/rover_basic.png' + hack);
+
+  this.load.atlas('materials', 'game/assets/materials.png?' + hack, 'game/assets/materials.json' + hack);
+  // var image1 = this.add.image(200, 300, 'materials', 'Dirt');
 }
 
 function create () {
 
-  console.log(this);
+  MapEnvironment.initialize(this);
+  MapEnvironment.generateChunks((new Date()).getTime());
 
-  var mapWidth = 1024 * 64;
-  var mapHeight = 1024 * 64;
-
-  this.cameras.main.setBounds(0, 0, mapWidth, mapHeight);
-  this.physics.world.setBounds(0, 0, mapWidth, mapHeight);
 
   //  Mash 4 images together to create our background
-  this.add.image(0, 0, 'bg').setOrigin(0);
-  this.add.image(1280, 0, 'bg').setOrigin(0);
-  this.add.image(0, 900, 'bg').setOrigin(0);
-  this.add.image(1280, 900, 'bg').setOrigin(0);
-
+  //this.add.image(0, 0, 'bg').setOrigin(0);
+  //this.add.image(1280, 0, 'bg').setOrigin(0);
+  //this.add.image(0, 900, 'bg').setOrigin(0);
+  //this.add.image(1280, 900, 'bg').setOrigin(0);
 
   keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
   keyDown = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
@@ -62,10 +62,11 @@ function create () {
 
   player = this.physics.add.image(400, 300, 'rover');
   player.setSize(64, 64);
+  player.depth = 100;
 
-  player.setCollideWorldBounds(true);
+ // player.setCollideWorldBounds(true);
 
-  this.cameras.main.startFollow(player, true, 0.5, 0.5);
+  this.cameras.main.startFollow(player, false);
 
   //this.cameras.main.setDeadzone(400, 200);
   this.cameras.main.setZoom(1);
@@ -77,15 +78,22 @@ function create () {
 function update () {
   var cam = this.cameras.main;
 
+  var playerX = Math.floor(player.x / 64);
+  var playerY = Math.floor(player.y / 64);
+
+  MapEnvironment.position.x = playerX;
+  MapEnvironment.position.y = playerY;
+
   text.setText([
-      'X: ' + Math.round(cam.scrollX),
-      'Y: ' + Math.round(cam.scrollY)
+      'X: ' + playerX,
+      'Y: ' + playerY
   ]);
 
   updateControls();
 
   performMovement(player, getDirection());
 
+  MapEnvironment.updateChunks();
 }
 
 function updateControls() {
