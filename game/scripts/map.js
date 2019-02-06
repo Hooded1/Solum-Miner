@@ -54,8 +54,8 @@ var _mapEnvironment = MapEnvironment = {
   position: {
     x: 0,
     y: 0,
-    chunkX: 0,
-    chunkY: 0,
+    chunkX: undefined,
+    chunkY: undefined,
   },
 
   generateChunks: (seed) => {
