@@ -2,65 +2,65 @@
   "frames": [
     {
       "filename": "Unknown",
-      "frame": {"x":0,"y":0,"w":16,"h":16},
+      "frame": {"x":0,"y":0,"w":64,"h":64},
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-      "sourceSize": {"w":16,"h":16},
+      "spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+      "sourceSize": {"w":64,"h":64},
       "pivot": {"x":0.5,"y":0.5}
     },
     {
       "filename": "Grass",
-      "frame": {"x":32,"y":0,"w":16,"h":16},
+      "frame": {"x":128,"y":0,"w":64,"h":64},
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-      "sourceSize": {"w":16,"h":16},
+      "spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+      "sourceSize": {"w":64,"h":64},
       "pivot": {"x":0.5,"y":0.5}
     },
     {
       "filename": "Dirt",
-      "frame": {"x":17,"y":1,"w":14,"h":14},
+      "frame": {"x":64,"y":0,"w":64,"h":64},
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-      "sourceSize": {"w":16,"h":16},
+      "spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+      "sourceSize": {"w":64,"h":64},
       "pivot": {"x":0.5,"y":0.5}
     },
     {
       "filename": "Mud",
-      "frame": {"x":48,"y":0,"w":16,"h":16},
+      "frame": {"x":192,"y":0,"w":64,"h":64},
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-      "sourceSize": {"w":16,"h":16},
+      "spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+      "sourceSize": {"w":64,"h":64},
       "pivot": {"x":0.5,"y":0.5}
     },
     {
       "filename": "Water",
-      "frame": {"x":64,"y":0,"w":16,"h":16},
+      "frame": {"x":256,"y":0,"w":64,"h":64},
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-      "sourceSize": {"w":16,"h":16},
+      "spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+      "sourceSize": {"w":64,"h":64},
       "pivot": {"x":0.5,"y":0.5}
     },
     {
       "filename": "Sand",
-      "frame": {"x":80,"y":0,"w":16,"h":16},
+      "frame": {"x":80,"y":0,"w":64,"h":64},
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-      "sourceSize": {"w":16,"h":16},
+      "spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+      "sourceSize": {"w":64,"h":64},
       "pivot": {"x":0.5,"y":0.5}
     },
     {
       "filename": "Path",
-      "frame": {"x":96,"y":0,"w":16,"h":16},
+      "frame": {"x":320,"y":0,"w":64,"h":64},
       "rotated": false,
       "trimmed": false,
-      "spriteSourceSize": {"x":0,"y":0,"w":16,"h":16},
-      "sourceSize": {"w":16,"h":16},
+      "spriteSourceSize": {"x":0,"y":0,"w":64,"h":64},
+      "sourceSize": {"w":64,"h":64},
       "pivot": {"x":0.5,"y":0.5}
     }
   ]

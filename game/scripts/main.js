@@ -61,7 +61,7 @@ function create () {
   this.cameras.main.startFollow(player, false);
 
   //this.cameras.main.setDeadzone(400, 200);
-  this.cameras.main.setZoom(1);
+  this.cameras.main.setZoom(0.75);
 
   text = this.add.text(32, 32).setScrollFactor(0).setFontSize(16).setColor('#ffffff');
   text.depth = 100;
