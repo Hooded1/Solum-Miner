@@ -10,7 +10,7 @@ var Direction = {
   NW : 8,
 }
 
-var boostVelocity = 500;
+var boostVelocity = 750;
 var normalVelocity = 50;
 
 function getVelocity(direction) {

@@ -21,3 +21,30 @@ class Material {
     this.image = undefined;
   }
 }
+
+class Chunk {
+  constructor(width, height) {
+    this.x = 0;
+    this.y = 0;
+
+    this.blocks = [];
+    this.width = width;
+    this.height = height;
+
+    for (var x = 0; x < width; x++) {
+      this.blocks[x] = [];
+
+      for (var y = 0; y < height; y++) {
+        this.blocks[x][y] = new Material(MaterialType.Dirt);
+      }
+    }
+  }
+
+  clone() {
+    var chunk = new Chunk(this.width, this.height);
+    chunk.x = this.x;
+    chunk.y = this.y;
+    chunk.blocks = this.blocks;
+    return chunk;
+  }
+}

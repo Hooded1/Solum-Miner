@@ -7,11 +7,11 @@ var _mapEnvironment = MapEnvironment = {
     var blockWidth = 64;
     var blockHeight = 64;
 
-    var chunkWidth = 64;
-    var chunkHeight = 64;
+    var chunkWidth = 8;
+    var chunkHeight = 8;
 
-    var mapWidth = 4;
-    var mapHeight = 4;
+    var mapWidth = 64;
+    var mapHeight = 64;
 
     _mapEnvironment.map.blockWidth = blockWidth;
     _mapEnvironment.map.blockHeight = blockHeight;
@@ -25,6 +25,9 @@ var _mapEnvironment = MapEnvironment = {
     var worldWidth = mapWidth * chunkWidth * blockWidth;
     var worldHeight = mapHeight * chunkHeight * blockHeight;
 
+    _mapEnvironment.map.totalWidth = worldWidth;
+    _mapEnvironment.map.totalHeight = worldHeight;
+
     //scene.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
     //scene.physics.world.setBounds(0, 0, worldWidth, worldHeight);
   },
@@ -34,6 +37,8 @@ var _mapEnvironment = MapEnvironment = {
   processing: undefined,
 
   chunks: [],
+
+  loadedChunks: [],
 
   chunkChanged: true,
 
@@ -54,7 +59,9 @@ var _mapEnvironment = MapEnvironment = {
   },
 
   generateChunks: (seed) => {
-    _mapEnvironment.processing.noiseSeed(seed);
+    if (seed) {
+      _mapEnvironment.processing.noiseSeed(seed);
+    }
 
     _mapEnvironment.chunks = [];
 
@@ -63,8 +70,11 @@ var _mapEnvironment = MapEnvironment = {
 
       for (var cy = 0; cy < _mapEnvironment.map.height; cy++) {
 
-        var chunk = _mapEnvironment.generateEmptyChunk();
+        var chunk = new Chunk(_mapEnvironment.map.chunkWidth, _mapEnvironment.map.chunkHeight);
         _mapEnvironment.chunks[cx][cy] = chunk;
+
+        chunk.x = cx * _mapEnvironment.map.chunkWidth * _mapEnvironment.map.blockWidth;
+        chunk.y = cy * _mapEnvironment.map.chunkHeight * _mapEnvironment.map.blockHeight;
 
         _mapEnvironment.generateChunkBlocks(chunk, cx, cy, _mapEnvironment.generateTerrainBlocks);
       }
@@ -75,8 +85,8 @@ var _mapEnvironment = MapEnvironment = {
     for (var bx = 0; bx < _mapEnvironment.map.chunkWidth; bx++) {
       for (var by = 0; by < _mapEnvironment.map.chunkHeight; by++) {
 
-        var noiseX = ((x * _mapEnvironment.map.chunkWidth) + bx) / 10;
-        var noiseY = ((y * _mapEnvironment.map.chunkHeight) + by) / 10;
+        var noiseX = ((x * _mapEnvironment.map.chunkWidth) + bx) / 25;
+        var noiseY = ((y * _mapEnvironment.map.chunkHeight) + by) / 25;
 
         var value = _mapEnvironment.processing.noise(noiseX, noiseY);
 
@@ -87,11 +97,11 @@ var _mapEnvironment = MapEnvironment = {
 
   generateTerrainBlocks: (chunk, x, y, value) => {
     if (value < 0.35) {
-      chunk[x][y] = new Material(MaterialType.Water);
+      chunk.blocks[x][y] = new Material(MaterialType.Water);
     } else if (value < 0.375) {
-      chunk[x][y] = new Material(MaterialType.Mud);
+      chunk.blocks[x][y] = new Material(MaterialType.Mud);
     } else if (value > 0.55) {
-      chunk[x][y] = new Material(MaterialType.Grass);
+      chunk.blocks[x][y] = new Material(MaterialType.Grass);
     }
   },
 
@@ -99,42 +109,124 @@ var _mapEnvironment = MapEnvironment = {
 
   },
 
-  generateEmptyChunk: () => {
-    var chunk = [];
+  updatePosition: (x, y) => {
+    _mapEnvironment.position.x = x;
+    _mapEnvironment.position.y = y;
 
-    for (var x = 0; x < _mapEnvironment.map.chunkWidth; x++) {
-      chunk[x] = [];
+    var chunkX = Math.floor(x / _mapEnvironment.map.chunkWidth);
+    var chunkY = Math.floor(y / _mapEnvironment.map.chunkHeight);
 
-      for (var y = 0; y < _mapEnvironment.map.chunkHeight; y++) {
-        chunk[x][y] = new Material(MaterialType.Dirt);
-      }
+    if (chunkX != _mapEnvironment.position.chunkX || chunkY != _mapEnvironment.position.chunkY) {
+      _mapEnvironment.position.chunkX = chunkX;
+      _mapEnvironment.position.chunkY = chunkY;
+
+      _mapEnvironment.updateChunks();
     }
-
-    return chunk;
   },
 
   // update scene
   updateChunks: () => {
-    if (_mapEnvironment.chunkChanged == false) return;
-    _mapEnvironment.chunkChanged = false;
 
-    var chunk = _mapEnvironment.chunks[_mapEnvironment.position.chunkX][_mapEnvironment.position.chunkY];
-    _mapEnvironment.updateChunk(chunk, 0, 0);
+    for (var i = 0; i < _mapEnvironment.loadedChunks.length; i++) {
+      _mapEnvironment.destroyChunk(_mapEnvironment.loadedChunks[i]);
+    }
 
+    var loadedChunks = [];
+    var centerChunk = _mapEnvironment.chunks[_mapEnvironment.position.chunkX][_mapEnvironment.position.chunkY];
 
+    for (var x = _mapEnvironment.position.chunkX - 1; x <= _mapEnvironment.position.chunkX + 1; x++) {
+      for (var y = _mapEnvironment.position.chunkY - 1; y <= _mapEnvironment.position.chunkY + 1; y++) {
+
+        var cx = x;
+        var cy = y;
+
+        var offsetTop = false;
+        var offsetLeft = false;
+        var offsetRight = false;
+        var offsetBottom = false;
+
+        if (cx < 0) {
+          cx += _mapEnvironment.map.width;
+          offsetLeft = true;
+        }
+        if (cx >= _mapEnvironment.map.width) {
+          cx -= _mapEnvironment.map.width;
+          offsetRight = true;
+        }
+
+        if (cy < 0) {
+          cy += _mapEnvironment.map.height;
+          offsetTop = true;
+        }
+        if (cy >= _mapEnvironment.map.height) {
+          cy -= _mapEnvironment.map.height;
+          offsetBottom = true;
+        }
+
+        var chunk = _mapEnvironment.chunks[cx][cy];
+
+        var hasOffset = (offsetTop || offsetBottom || offsetLeft || offsetRight);
+
+        if (hasOffset) {
+          chunk = chunk.clone();
+
+          var chunkWidth = _mapEnvironment.map.chunkWidth * _mapEnvironment.map.blockWidth;
+          var chunkHeight = _mapEnvironment.map.chunkHeight * _mapEnvironment.map.blockHeight;
+
+          if (offsetLeft) {
+            chunk.x = centerChunk.x - chunkWidth;
+          }
+          if (offsetRight) {
+            chunk.x += centerChunk.x + chunkWidth;
+          }
+
+          if (offsetTop) {
+            chunk.y = centerChunk.y - chunkHeight;
+          }
+          if (offsetBottom) {
+            chunk.y = centerChunk.y + chunkHeight;
+          }
+        }
+
+        loadedChunks.push(chunk);
+        
+        _mapEnvironment.updateChunk(chunk);
+      }
+    }
+
+    _mapEnvironment.loadedChunks = loadedChunks;
   },
 
-  updateChunk: (chunk, x, y) => {
+  updateChunk: (chunk) => {
+
     for (var bx = 0; bx < _mapEnvironment.map.chunkWidth; bx++) {
       for (var by = 0; by < _mapEnvironment.map.chunkHeight; by++) {
-        var block = chunk[bx][by];
+        var block = chunk.blocks[bx][by];
 
-        var mapX = x + (bx * _mapEnvironment.map.blockWidth);
-        var mapY = y + (by * _mapEnvironment.map.blockWidth);
+        var mapX = chunk.x + (bx * _mapEnvironment.map.blockWidth);
+        var mapY = chunk.y + (by * _mapEnvironment.map.blockWidth);
 
         block.image = _mapEnvironment.scene.add.image(mapX, mapY, 'materials', block.type);
-        block.image.scaleX = 4.1;
-        block.image.scaleY = 4.1;
+
+        var scaleX = _mapEnvironment.map.blockWidth / block.image.width;
+        var scaleY = _mapEnvironment.map.blockHeight / block.image.height;
+
+        block.image.scaleX = scaleX;
+        block.image.scaleY = scaleY;
+      }
+    }
+  },
+
+  destroyChunk: (chunk) => {
+
+    for (var cx = 0; cx < _mapEnvironment.map.chunkWidth; cx++) {
+      for (var cy = 0; cy < _mapEnvironment.map.chunkHeight; cy++) {
+
+        var block = chunk.blocks[cx][cy];
+
+        if (block.image) {
+          block.image.destroy();
+        }
       }
     }
   }

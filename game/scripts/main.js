@@ -22,7 +22,7 @@ var keyUp, keyDown, keyLeft, keyRight, keyShift;
 
 window.setTimeout(() => {
   game = new Phaser.Game(config);
-}, 3000);
+}, 500);
 
 function preload ()
 {
@@ -34,20 +34,12 @@ function preload ()
   this.load.image('rover', 'game/assets/rover_basic.png' + hack);
 
   this.load.atlas('materials', 'game/assets/materials.png?' + hack, 'game/assets/materials.json' + hack);
-  // var image1 = this.add.image(200, 300, 'materials', 'Dirt');
 }
 
 function create () {
 
   MapEnvironment.initialize(this);
-  MapEnvironment.generateChunks((new Date()).getTime());
-
-
-  //  Mash 4 images together to create our background
-  //this.add.image(0, 0, 'bg').setOrigin(0);
-  //this.add.image(1280, 0, 'bg').setOrigin(0);
-  //this.add.image(0, 900, 'bg').setOrigin(0);
-  //this.add.image(1280, 900, 'bg').setOrigin(0);
+  MapEnvironment.generateChunks();
 
   keyUp = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
   keyDown = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
@@ -72,14 +64,36 @@ function create () {
   this.cameras.main.setZoom(1);
 
   text = this.add.text(32, 32).setScrollFactor(0).setFontSize(16).setColor('#ffffff');
-
+  text.depth = 100;
 }
 
 function update () {
   var cam = this.cameras.main;
 
-  var playerX = Math.floor(player.x / 64);
-  var playerY = Math.floor(player.y / 64);
+  var positionX = player.x + 16;
+  var positionY = player.y + 16;
+
+  if (positionX < 0) {
+    player.x += MapEnvironment.map.totalWidth;
+  }
+
+  if (positionX >= MapEnvironment.map.totalWidth) {
+    player.x -= MapEnvironment.map.totalWidth;
+  }
+
+  if (positionY < 0) {
+    player.y += MapEnvironment.map.totalHeight;
+  }
+
+  if (positionY >= MapEnvironment.map.totalHeight) {
+    player.y -= MapEnvironment.map.totalHeight;
+  }
+
+  positionX = player.x + 16;
+  positionY = player.y + 16;
+
+  var playerX = Math.floor(positionX / MapEnvironment.map.blockWidth);
+  var playerY = Math.floor(positionY / MapEnvironment.map.blockHeight);
 
   MapEnvironment.position.x = playerX;
   MapEnvironment.position.y = playerY;
@@ -93,7 +107,7 @@ function update () {
 
   performMovement(player, getDirection());
 
-  MapEnvironment.updateChunks();
+  MapEnvironment.updatePosition(playerX, playerY);
 }
 
 function updateControls() {
